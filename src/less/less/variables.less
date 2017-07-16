@@ -1,0 +1,44 @@
+//  Colors
+
+@white:                 #fff;
+@black:                 #000;
+
+@red:                   #E94646;
+@green:                 #00BAA9;
+
+
+//  Sizing variables
+
+@min-page-width:        1200px;
+
+@top-bar-height:          4rem;
+@bottom-bar-height:       4rem;
+@header-height:           @top-bar-height + @bottom-bar-height;
+@inline-block-correction: -0.2857em;
+
+
+//  Transitions
+
+@simple-transition:     0.2s ease 0s;
+@opacity-transition:    opacity 0.1s ease;
+
+
+//  Effects
+
+@button-hover-brightness:      104%;
+@button-disabled-opacity:      0.5;
+
+
+//  Style library
+
+.reset-list() {
+    margin: 0;
+    padding: 0;
+    list-style: none outside none;
+}
+
+.correct-inline-block() {
+    margin-right: @inline-block-correction;
+
+    &:last-child { margin-right: 0; }
+}

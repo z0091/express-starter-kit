@@ -1,0 +1,28 @@
+{
+  "env": {
+    "mocha": true
+  },
+  "globals": {
+    "expect": true,
+    "sinon": true,
+    "scheduleNextTick": true,
+    "ok": true,
+    "notOk": true,
+    "equal": true,
+    "deepEqual": true,
+    "instanceOf": true,
+    "containSubset": true,
+    "test": true
+  },
+  "rules": {
+    "max-len": ["error", 140, 2, {
+      "ignoreUrls": true,
+      "ignoreComments": true,
+      "ignoreStrings": true,
+      "ignoreTemplateLiterals": true
+    }],
+    "import/no-extraneous-dependencies": "off",
+    // mocha
+    "no-unused-expressions": 0
+  }
+}

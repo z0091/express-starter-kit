@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="api-base-path" value="<%= htmlWebpackPlugin.options.api_prefix %>">
+    <meta name="pdf-api-base-path" value="<%= htmlWebpackPlugin.options.printer_prefix %>">
+    <meta name="latest-version" value="<%= htmlWebpackPlugin.options.version %>">
+    <meta name="app-title" value="<%= htmlWebpackPlugin.options.app_name %>">
+
+    <title><%= htmlWebpackPlugin.options.app_name %> (current version: <%= htmlWebpackPlugin.options.version %>)</title>
+</head>
+<body>
+    <header id="header" class="header"></header>
+    <main id="main" class="main"></main>
+    <div id="dialogs" class="dialog-container"></div>
+</body>
+</html>

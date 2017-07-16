@@ -1,0 +1,11 @@
+@media print {
+    @page {
+        size: landscape;
+    }
+
+    //  Fixes thead printing issue with Chrome 53. See this for more details:
+    //  https://bugs.chromium.org/p/chromium/issues/detail?id=24826
+    thead {
+        display: table-row-group;
+    }
+}
