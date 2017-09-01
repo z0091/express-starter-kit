@@ -1,20 +1,20 @@
 const webpack = require('webpack');
-const webpackConfig = require('../config/webpack.config');
+const { serverConfig } = require('../config/webpack.config');
 
 /**
  * Creates application bundles from the source files.
  */
-function bundle() {
+function bundleServer() {
     return new Promise((resolve, reject) => {
-        webpack(webpackConfig).run((err, stats) => {
+        webpack(serverConfig).run((err, stats) => {
             if (err) {
                 return reject(err);
             }
 
-            console.log(stats.toString(webpackConfig.stats));
+            console.log(stats.toString(serverConfig.stats));
             return resolve();
         });
     });
 }
 
-module.exports = bundle;
+module.exports = bundleServer;

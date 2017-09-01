@@ -1,29 +1,32 @@
 /* eslint-disable global-require */
+/* global WEBPACK_BUNDLE */
 
 require('babel-polyfill');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const compress = require('compression');
-const log4js = require('log4js');
+// const log4js = require('log4js');
 const history = require('connect-history-api-fallback');
 
 const bodyParserMiddleware = require('./middlewares/bodyParserMiddleware');
 const routers = require('./routers');
 const config = require('../config/config');
-const log = require('../config/log');
+// const log = require('../config/log');
+const log = console;
 
 const port = config.get('server:port');
 const host = config.get('server:host');
 const assetsPath = config.get('app:assetsPath');
 const distPath = config.get('dist:path');
-const isDebug = !config.get('release');
-const hotModuleReplacement = config.get('hotWebpack');
-const NODE_ENV = config.get('NODE_ENV');
+const isRelease = config.get('release');
+const isDebug = !isRelease;
+
+global.WEBPACK_BUNDLE = isRelease;
 
 // Create app
 const app = express();
 
-app.use(log4js.connectLogger(log.http));
+// app.use(log4js.connectLogger(log.http));
 app.use(history({
     rewrites: [
         {
@@ -41,9 +44,11 @@ app.use(bodyParserMiddleware.bodyParserUrlencodedMiddleware());
 app.use('/assets', express.static(assetsPath));
 
 log.info(`Debug mode is ${isDebug}`);
-log.info(`NODE_ENV: ${NODE_ENV}`);
+log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
 
-if (isDebug) {
+if (WEBPACK_BUNDLE) {
+    app.use(express.static(distPath));
+} else {
     const webpack = require('webpack');
     const webpackConfig = require('../config/webpack.config');
     const compiler = webpack(webpackConfig);
@@ -52,12 +57,10 @@ if (isDebug) {
         publicPath: webpackConfig.output.publicPath,
         stats: webpackConfig.stats,
     }));
-    if (hotModuleReplacement) {
+    if (config.get('hotWebpack')) {
         log.info('Enable webpack [HRM] middleware');
         app.use(require('webpack-hot-middleware')(compiler));
     }
-} else {
-    app.use(express.static(distPath));
 }
 
 app.use('/', routers(config, log.api));

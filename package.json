@@ -5,7 +5,11 @@
   "scripts": {
     "start": "node server/index.js",
     "start:prod": "node server/index.js --release",
-    "build": "$(npm bin)/babel-node utils/run build --release",
+    "build": "$(npm bin)/babel-node utils/run build",
+    "build:dist": "$(npm bin)/babel-node utils/run build --release",
+    "bundle:app": "$(npm bin)/babel-node utils/run bundleApp",
+    "bundle:server": "$(npm bin)/babel-node utils/run bundleServer",
+    "clean": "$(npm bin)/babel-node utils/run clean",
     "lint": "$(npm bin)/eslint .",
     "security:nsp": "$(npm bin)/nsp check",
     "security:snyk": "$(npm bin)/snyk test",
@@ -87,7 +91,8 @@
     "vue-template-compiler": "^2.4.1",
     "webpack": "^3.3.0",
     "webpack-dev-middleware": "^1.11.0",
-    "webpack-hot-middleware": "^2.18.2"
+    "webpack-hot-middleware": "^2.18.2",
+    "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {
     "babel-polyfill": "^6.23.0",

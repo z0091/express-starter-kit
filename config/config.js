@@ -9,12 +9,8 @@ nconf
     .file(path.resolve(__dirname, '../local.conf.json'))
     .defaults(defaultConf);
 
-if (nconf.get('NODE_ENV') === undefined) {
-    const NODE_ENV = nconf.get('release') ? 'production' : 'development';
-    process.env.NODE_ENV = NODE_ENV;
-    nconf.set('NODE_ENV', NODE_ENV);
-} else {
-    nconf.set('release', nconf.get('NODE_ENV') === 'production');
+if (process.env.NODE_ENV) {
+    nconf.set('release', process.env.NODE_ENV === 'production');
 }
 
 module.exports = nconf;

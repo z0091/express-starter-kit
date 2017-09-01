@@ -1,6 +1,7 @@
 import run from './run';
 import clean from './clean';
-import bundle from './bundle';
+import bundleApp from './bundleApp';
+import bundleServer from './bundleServer';
 
 /**
  * Compiles the project from source files into a distributable
@@ -8,7 +9,8 @@ import bundle from './bundle';
  */
 async function build() {
     await run(clean);
-    await run(bundle);
+    await run(bundleApp);
+    await run(bundleServer);
 }
 
 module.exports = build;

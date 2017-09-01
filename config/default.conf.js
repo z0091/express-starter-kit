@@ -10,6 +10,7 @@ module.exports = {
     app: {
         assetsPath: path.resolve(__dirname, '../assets'),
         srcPath: path.resolve(__dirname, '../src'),
+        serverPath: path.resolve(__dirname, '../server'),
         devtool: 'cheap-module-eval-source-map',
     },
     dist: {
