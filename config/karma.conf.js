@@ -1,4 +1,5 @@
-/* eslint-disable global-require*/
+/* eslint-disable global-require */
+
 process.env.NODE_ENV = 'test';
 
 const path = require('path');
@@ -52,7 +53,6 @@ module.exports = {
         require('karma-mocha-reporter'),
         require('karma-junit-reporter'),
         require('karma-sinon-chai'),
-        require('karma-jquery-chai'),
         require('karma-sourcemap-loader'),
         require('karma-chrome-launcher'),
     ],

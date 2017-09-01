@@ -11,8 +11,6 @@ module.exports = {
         assetsPath: path.resolve(__dirname, '../assets'),
         srcPath: path.resolve(__dirname, '../src'),
         devtool: 'cheap-module-eval-source-map',
-        apiPrefix: '/api',
-        printerPrefix: '/print',
     },
     dist: {
         path: path.resolve(__dirname, '../dist'),
@@ -59,9 +57,5 @@ module.exports = {
     server: {
         port: '9987',
         host: '127.0.0.1',
-        apiProtocol: 'http',
-        apiHost: '127.0.0.1',
-        apiPort: '8000',
-        apiPrefix: '/api',
     },
 };

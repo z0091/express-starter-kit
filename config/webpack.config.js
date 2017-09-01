@@ -3,6 +3,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const eslintFormatter = require('eslint-friendly-formatter');
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 const config = require('./config');
 
 const version = config.get('version');
@@ -27,14 +29,22 @@ const extractLess = new ExtractTextPlugin({
     disable: isDebug,
 });
 
+function resolve(dir) {
+    return path.join(__dirname, '..', dir);
+}
+
 module.exports = {
     context: srcPath,
     resolve: {
+        extensions: ['.js', '.vue', '.json'],
         modules: [
             srcPath,
             'node_modules',
         ],
-        alias: {},
+        alias: {
+            vue$: 'vue/dist/vue.esm.js',
+            '@': resolve('src'),
+        },
     },
     output: {
         filename: `app-${version}-[hash]${isRelease ? '.min' : ''}.js`,
@@ -43,14 +53,32 @@ module.exports = {
     },
 
     module: {
-        noParse: [/handsontable.full.js/],
         rules: [
+            {
+                test: /\.(js|vue)$/,
+                loader: 'eslint-loader',
+                enforce: 'pre',
+                include: [resolve('src'), resolve('test')],
+                options: {
+                    formatter: eslintFormatter,
+                },
+            },
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader',
+                options: {
+                    loaders: {
+                        scss: 'vue-style-loader!css-loader!sass-loader',
+                        sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax',
+                    },
+                    extractCSS: true,
+                },
+            },
             {
                 test: /\.js$/,
                 use: 'babel-loader',
                 exclude: /(node_modules)/,
             },
-            { test: /\.hbs$/, use: ['handlebars-template-loader'] },
             {
                 test: /(\.css|\.less)$/,
                 use: extractLess.extract({
@@ -101,8 +129,6 @@ module.exports = {
             template: path.resolve(srcPath, 'index.html'),
             hash: false,
             version,
-            api_prefix: config.get('app:apiPrefix'),
-            printer_prefix: config.get('app:printerPrefix'),
             favicon: path.resolve(assetsPath, './img/favicon.png'),
             filename: 'index.html',
             inject: 'body',
@@ -139,6 +165,14 @@ module.exports = {
                 compress: {
                     screw_ie8: true,
                     warnings: isVerbose,
+                },
+            }),
+            new webpack.LoaderOptionsPlugin({
+                minimize: true,
+            }),
+            new OptimizeCSSPlugin({
+                cssProcessorOptions: {
+                    safe: true,
                 },
             }),
         ],

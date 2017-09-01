@@ -1,4 +1,4 @@
-/* eslint-disable global-require*/
+/* eslint-disable global-require */
 
 require('babel-polyfill');
 const express = require('express');
@@ -18,12 +18,20 @@ const assetsPath = config.get('app:assetsPath');
 const distPath = config.get('dist:path');
 const isDebug = !config.get('release');
 const hotModuleReplacement = config.get('hotWebpack');
+const NODE_ENV = config.get('NODE_ENV');
 
 // Create app
 const app = express();
 
 app.use(log4js.connectLogger(log.http));
-app.use(history());
+app.use(history({
+    rewrites: [
+        {
+            from: /^\/api(\?|\/.*|$)/,
+            to: '/api',
+        },
+    ],
+}));
 
 app.use(cookieParser());
 app.use(compress()); // Apply gzip compression
@@ -32,12 +40,14 @@ app.use(bodyParserMiddleware.bodyParserJsonMiddleware());
 app.use(bodyParserMiddleware.bodyParserUrlencodedMiddleware());
 app.use('/assets', express.static(assetsPath));
 
+log.info(`Debug mode is ${isDebug}`);
+log.info(`NODE_ENV: ${NODE_ENV}`);
+
 if (isDebug) {
     const webpack = require('webpack');
     const webpackConfig = require('../config/webpack.config');
     const compiler = webpack(webpackConfig);
 
-    log.info('Debug mode is true');
     app.use(require('webpack-dev-middleware')(compiler, {
         publicPath: webpackConfig.output.publicPath,
         stats: webpackConfig.stats,
