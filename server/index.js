@@ -50,7 +50,7 @@ if (WEBPACK_BUNDLE) {
     app.use(express.static(distPath));
 } else {
     const webpack = require('webpack');
-    const webpackConfig = require('../config/webpack.config');
+    const webpackConfig = require('../config/webpack.config').appConfig;
     const compiler = webpack(webpackConfig);
 
     app.use(require('webpack-dev-middleware')(compiler, {
