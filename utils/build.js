@@ -1,5 +1,6 @@
 import run from './run';
 import clean from './clean';
+import copy from './copy';
 import bundleApp from './bundleApp';
 import bundleServer from './bundleServer';
 
@@ -9,6 +10,7 @@ import bundleServer from './bundleServer';
  */
 async function build() {
     await run(clean);
+    await run(copy);
     await run(bundleApp);
     await run(bundleServer);
 }
