@@ -19,39 +19,13 @@ module.exports = {
     },
     log: {
         dev: {
-            replaceConsole: true,
             level: 'info',
             usefiles: false,
-            files: [{
-                type: 'file',
-                filename: 'log/app-dev.log',
-                maxLogSize: 10485760,
-                numBackups: 3,
-            }, {
-                type: 'file',
-                filename: 'log/api-dev.log',
-                maxLogSize: 10485760,
-                numBackups: 3,
-                category: 'api',
-            }],
             console: true,
         },
         prod: {
-            replaceConsole: true,
             level: 'info',
             usefiles: false,
-            files: [{
-                type: 'file',
-                filename: 'log/app-prod.log',
-                maxLogSize: 10485760,
-                numBackups: 3,
-            }, {
-                type: 'file',
-                filename: 'log/api-prod.log',
-                maxLogSize: 10485760,
-                numBackups: 3,
-                category: 'api',
-            }],
             console: false,
         },
     },
