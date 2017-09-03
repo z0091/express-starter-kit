@@ -25,7 +25,7 @@ module.exports = {
         },
         prod: {
             level: 'info',
-            usefiles: false,
+            usefiles: true,
             console: false,
         },
     },
