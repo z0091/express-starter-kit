@@ -5,8 +5,8 @@
 ## Requirements
 
 - Mac OS X, Linux, or Windows
-- [Node.js](https://nodejs.org/) v6.9 or newer
-- `npm` v3.10 or newer (included with `Node.js`)
+- [Node.js](https://nodejs.org/) v8.4 or newer
+- `npm` v5.4 or newer (included with `Node.js`)
 
 ## Quick Start
 
@@ -81,14 +81,16 @@ This command will compile, bundle and minify project's files, and put them into 
 
 ```
 assets/       - static assets like images and fonts
+config/       - config files
+server/       - server application source files
 src/          - application source files
 test/         - unit tests
-tools/        - everything related to development: server, configs, etc.
+utils/        - build utils
 ```
 
 ### Security vulnerabilities monitoring
 ##### Node security platform integration
-`nsp check` (subtask of `grunt default`) task checks `npm-shrinkwrap.json` for known vulnerabilities.
+`nsp check` (subtask of `npm run security`) task checks `package-lock.json` for known vulnerabilities.
 If build fails because of `nsp check` fail then use link in logs to investigate the problem.
 ```
 (+) 1 vulnerabilities found

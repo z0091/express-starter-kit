@@ -1,4 +1,4 @@
-/* eslint-disable global-require*/
+/* eslint-disable global-require */
 
 const conf = require('./config/karma.conf');
 

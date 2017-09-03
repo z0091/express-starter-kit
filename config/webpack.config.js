@@ -3,11 +3,15 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const eslintFormatter = require('eslint-friendly-formatter');
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
+const nodeExternals = require('webpack-node-externals');
 const config = require('./config');
 
 const version = config.get('version');
 const appName = config.get('name');
 const srcPath = config.get('app:srcPath');
+const serverPath = config.get('app:serverPath');
 const assetsPath = config.get('app:assetsPath');
 const distPath = config.get('dist:path');
 const isRelease = config.get('release');
@@ -27,30 +31,84 @@ const extractLess = new ExtractTextPlugin({
     disable: isDebug,
 });
 
-module.exports = {
-    context: srcPath,
+function resolve(dir) {
+    return path.join(__dirname, '..', dir);
+}
+
+const webpackConfig = {
     resolve: {
+        extensions: ['.js', '.vue', '.json'],
         modules: [
             srcPath,
             'node_modules',
         ],
-        alias: {},
+        alias: {
+            vue$: 'vue/dist/vue.esm.js',
+            '@': resolve('src'),
+        },
     },
     output: {
-        filename: `app-${version}-[hash]${isRelease ? '.min' : ''}.js`,
+        filename: `[name]-${version}-[hash]${isRelease ? '.min' : ''}.js`,
         path: distPath,
         publicPath: '/',
     },
 
+    plugins: [
+        new webpack.LoaderOptionsPlugin({
+            debug: isDebug,
+            minimize: isRelease,
+        }),
+    ],
+
+    cache: isDebug,
+
+    stats: {
+        colors: true,
+        modules: isVerbose,
+        reasons: isDebug,
+        hash: isVerbose,
+        version: isVerbose,
+        timings: true,
+        chunks: isVerbose,
+        chunkModules: isVerbose,
+        cached: isVerbose,
+        cachedAssets: isVerbose,
+    },
+};
+
+const appConfig = {
+    ...webpackConfig,
+    context: srcPath,
+
+    target: 'web',
+
     module: {
-        noParse: [/handsontable.full.js/],
         rules: [
+            {
+                test: /\.(js|vue)$/,
+                loader: 'eslint-loader',
+                enforce: 'pre',
+                include: [resolve('src'), resolve('test')],
+                options: {
+                    formatter: eslintFormatter,
+                },
+            },
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader',
+                options: {
+                    loaders: {
+                        scss: 'vue-style-loader!css-loader!sass-loader',
+                        sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax',
+                    },
+                    extractCSS: true,
+                },
+            },
             {
                 test: /\.js$/,
                 use: 'babel-loader',
                 exclude: /(node_modules)/,
             },
-            { test: /\.hbs$/, use: ['handlebars-template-loader'] },
             {
                 test: /(\.css|\.less)$/,
                 use: extractLess.extract({
@@ -94,6 +152,7 @@ module.exports = {
     },
 
     plugins: [
+        ...webpackConfig.plugins,
         extractLess,
         new webpack.ContextReplacementPlugin(/moment\/locale/, /en-gb/),
         new HtmlWebpackPlugin({
@@ -101,17 +160,16 @@ module.exports = {
             template: path.resolve(srcPath, 'index.html'),
             hash: false,
             version,
-            api_prefix: config.get('app:apiPrefix'),
-            printer_prefix: config.get('app:printerPrefix'),
             favicon: path.resolve(assetsPath, './img/favicon.png'),
             filename: 'index.html',
             inject: 'body',
         }),
         new webpack.ProvidePlugin({}),
         new webpack.NoEmitOnErrorsPlugin(),
-        new webpack.LoaderOptionsPlugin({
-            debug: isDebug,
-            minimize: isRelease,
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: isDebug ? '"development"' : '"production"',
+            },
         }),
 
         ...hotModuleReplacement ? [
@@ -119,11 +177,6 @@ module.exports = {
         ] : [],
 
         ...isDebug ? [] : [
-            new webpack.DefinePlugin({
-                'process.env': {
-                    NODE_ENV: '"production"',
-                },
-            }),
             new CopyWebpackPlugin([
                 {
                     context: assetsPath,
@@ -141,23 +194,78 @@ module.exports = {
                     warnings: isVerbose,
                 },
             }),
+            new OptimizeCSSPlugin({
+                cssProcessorOptions: {
+                    safe: true,
+                },
+            }),
         ],
     ],
 
     entry,
     devtool,
-    cache: isDebug,
 
-    stats: {
-        colors: true,
-        modules: isVerbose,
-        reasons: isDebug,
-        hash: isVerbose,
-        version: isVerbose,
-        timings: true,
-        chunks: isVerbose,
-        chunkModules: isVerbose,
-        cached: isVerbose,
-        cachedAssets: isVerbose,
+};
+
+const serverConfig = {
+    ...webpackConfig,
+    target: 'node',
+
+    resolve: {
+        ...webpackConfig.resolve,
     },
+
+    externals: [nodeExternals()],
+
+    output: {
+        ...webpackConfig.output,
+        filename: 'server.js',
+        libraryTarget: 'commonjs2',
+    },
+
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                loader: 'babel-loader',
+                exclude: /(node_modules)/,
+            },
+        ],
+    },
+
+    plugins: [
+        ...webpackConfig.plugins,
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
+            'process.env.BROWSER': false,
+            WEBPACK_BUNDLE: true,
+            __DEV__: isDebug,
+        }),
+
+        ...isDebug ? [] : [
+            new webpack.optimize.UglifyJsPlugin({
+                minimize: true,
+                mangle: true,
+                compress: {
+                    warnings: isVerbose,
+                },
+            }),
+        ],
+    ],
+
+    entry: path.resolve(serverPath, 'index.js'),
+
+    node: {
+        console: false,
+        global: false,
+        process: false,
+        Buffer: false,
+        __filename: false,
+        __dirname: false,
+    },
+};
+
+module.exports = {
+    appConfig,
+    serverConfig,
 };
