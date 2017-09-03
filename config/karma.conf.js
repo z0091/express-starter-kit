@@ -6,7 +6,7 @@ const path = require('path');
 const config = require('./config');
 const webpackConfig = require('./webpack.config').appConfig;
 
-const rootPath = path.join(__dirname, '../../');
+const rootPath = path.join(__dirname, '../');
 const doVisual = config.get('onlyVisualTests');
 
 module.exports = {
