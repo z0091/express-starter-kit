@@ -32,5 +32,6 @@ module.exports = {
     server: {
         port: '9987',
         host: '127.0.0.1',
+        secret: 'Z^H3r!fr?"dEOpfe&$3f',
     },
 };

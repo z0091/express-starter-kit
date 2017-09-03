@@ -7,6 +7,9 @@ const cookieParser = require('cookie-parser');
 const compress = require('compression');
 const log4js = require('log4js');
 const history = require('connect-history-api-fallback');
+const session = require('express-session');
+const uuid = require('node-uuid');
+const passport = require('passport');
 
 const bodyParserMiddleware = require('./middlewares/bodyParserMiddleware');
 const routers = require('./routers');
@@ -15,6 +18,7 @@ const log = require('./log');
 
 const port = config.get('server:port');
 const host = config.get('server:host');
+const secret = config.get('server:secret');
 const assetsPath = config.get('app:assetsPath');
 const distPath = config.get('dist:path');
 const isRelease = config.get('release');
@@ -34,9 +38,20 @@ app.use(history({
         },
     ],
 }));
+app.use(session({
+    genid() {
+        return uuid.v4();
+    },
+    resave: false,
+    saveUninitialized: true,
+    secret,
+}));
 
 app.use(cookieParser());
 app.use(compress()); // Apply gzip compression
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(bodyParserMiddleware.bodyParserJsonMiddleware());
 app.use(bodyParserMiddleware.bodyParserUrlencodedMiddleware());
