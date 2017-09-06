@@ -1,6 +1,10 @@
 /* eslint-disable global-require */
 /* global WEBPACK_BUNDLE */
 
+if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = 'development';
+}
+
 require('babel-polyfill');
 const express = require('express');
 const cookieParser = require('cookie-parser');
@@ -22,8 +26,16 @@ const isDebug = !isRelease;
 
 global.WEBPACK_BUNDLE = isRelease;
 
+const readyPromises = [];
+
 // Create app
 const app = express();
+
+// And run the server
+let server;
+const run = () => readyPromises.push(new Promise((resolve) => {
+    server = app.listen(port, host, resolve);
+}));
 
 app.use(log4js.connectLogger(log4js.getLogger('http')));
 app.use(history({
@@ -53,21 +65,34 @@ if (WEBPACK_BUNDLE) {
     const webpackConfig = require('../config/webpack.config').appConfig;
     const compiler = webpack(webpackConfig);
 
-    // eslint-disable-next-line import/no-extraneous-dependencies
-    app.use(require('webpack-dev-middleware')(compiler, {
-        publicPath: webpackConfig.output.publicPath,
-        stats: webpackConfig.stats,
-    }));
     if (config.get('hotWebpack')) {
         log.info('Enable webpack [HRM] middleware');
         // eslint-disable-next-line import/no-extraneous-dependencies
         app.use(require('webpack-hot-middleware')(compiler));
     }
+
+    // eslint-disable-next-line import/no-extraneous-dependencies
+    const webpackDevMiddleware = require('webpack-dev-middleware')(compiler, {
+        publicPath: webpackConfig.output.publicPath,
+        stats: webpackConfig.stats,
+    });
+
+    readyPromises.push(new Promise((resolve) => {
+        webpackDevMiddleware.waitUntilValid(resolve);
+    }));
+
+    app.use(webpackDevMiddleware);
 }
 
 app.use('/', routers(config, log.api));
 
-// And run the server
-app.listen(port, host, () => {
-    log.info(`Server is running. Please open http://${host}:${port}/`);
-});
+// Run server!!!
+run();
+
+const ready = Promise.all(readyPromises)
+    .then(() => log.info(`Server is running. Please open http://${host}:${port}/`));
+
+module.exports = {
+    ready,
+    close: () => server.close(),
+};

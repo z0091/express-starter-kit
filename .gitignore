@@ -7,5 +7,6 @@ static/public
 .idea
 /local.conf.json
 /log
-/reports
+test/e2e/reports
 npm-debug.log
+selenium-debug.log

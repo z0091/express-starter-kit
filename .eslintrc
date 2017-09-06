@@ -33,6 +33,9 @@
     ],
     "camelcase": "off",
     "no-underscore-dangle": "off",
-    "no-console": "error"
+    "no-console": "error",
+    "import/no-extraneous-dependencies": ["error", {
+      "optionalDependencies": ["test/unit/index.js"]
+    }]
   }
 }
