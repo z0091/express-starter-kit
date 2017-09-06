@@ -207,6 +207,21 @@ const appConfig = {
 
 };
 
+const testConfig = {
+    ...appConfig,
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: '"testing"',
+                BABEL_ENV: '"test"',
+            },
+        }),
+    ],
+
+    entry: '',
+    devtool: '#inline-source-map',
+};
+
 const serverConfig = {
     ...webpackConfig,
     target: 'node',
@@ -236,8 +251,10 @@ const serverConfig = {
     plugins: [
         ...webpackConfig.plugins,
         new webpack.DefinePlugin({
-            'process.env.NODE_ENV': isDebug ? '"development"' : '"production"',
-            'process.env.BROWSER': false,
+            'process.env': {
+                NODE_ENV: isDebug ? '"development"' : '"production"',
+                BROWSER: false,
+            },
             WEBPACK_BUNDLE: true,
             __DEV__: isDebug,
         }),
@@ -268,4 +285,5 @@ const serverConfig = {
 module.exports = {
     appConfig,
     serverConfig,
+    testConfig,
 };
