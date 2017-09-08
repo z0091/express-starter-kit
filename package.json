@@ -111,6 +111,7 @@
     "express": "^4.15.3",
     "express-session": "^1.15.5",
     "http-proxy": "^1.16.2",
+    "js-cookie": "^2.1.4",
     "lodash": "^4.17.4",
     "log4js": "^2.3.3",
     "nconf": "^0.8.4",

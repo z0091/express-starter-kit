@@ -28,10 +28,10 @@ export const remove = (name) => {
  * Add data to localStorage
  * @param {String} name
  * @param {*} value
- * @param {Number} expires - seconds to expires
+ * @param {Object} options
  */
-export const set = (name, value, expires = defExpires) => {
-    const milliSec = expires * 1000;
+export const set = (name, value, options = { expires: defExpires }) => {
+    const milliSec = options.expires * 1000;
     const schedule = new Date().getTime() + milliSec;
 
     localStorage.setItem(name, value);
@@ -41,7 +41,7 @@ export const set = (name, value, expires = defExpires) => {
 /**
  * Get data from localStorage
  * @param {String} name
- * @return {*|null}
+ * @return {*|undefined}
  */
 export const get = (name) => {
     const current = new Date().getTime();
@@ -54,8 +54,8 @@ export const get = (name) => {
     const isExpired = stored_time < current;
     if (isExpired) {
         // Remove
-        remove(name);
+        return remove(name);
     }
 
-    return isExpired ? null : localStorage.getItem(name);
+    return localStorage.getItem(name) || undefined;
 };

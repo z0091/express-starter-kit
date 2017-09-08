@@ -36,7 +36,7 @@ describe('Utils localStorageWrapper tests', () => {
         localStorage.setItem(`${key}_time`, getSchedule(0.5));
         // wait 1s
         setTimeout(() => {
-            expect(get(key)).to.be.not.ok;
+            expect(get(key)).to.equal(undefined);
             done();
         }, 1000);
     });
