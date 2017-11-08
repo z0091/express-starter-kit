@@ -84,7 +84,7 @@ const appConfig = {
 
     module: {
         rules: [
-            {
+            ...isDebug ? [] : [{
                 test: /\.(js|vue)$/,
                 loader: 'eslint-loader',
                 enforce: 'pre',
@@ -92,7 +92,7 @@ const appConfig = {
                 options: {
                     formatter: eslintFormatter,
                 },
-            },
+            }],
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',

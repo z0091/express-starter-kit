@@ -27,7 +27,7 @@ module.exports = {
 
     // reporter options
     mochaReporter: {
-        showDiff: false,
+        showDiff: true,
     },
 
     browsers: ['PhantomJS'],

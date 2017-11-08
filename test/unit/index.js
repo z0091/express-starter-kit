@@ -1,7 +1,10 @@
 import Vue from 'vue';
 import chaiSubset from 'chai-subset';
+import sinonChai from 'sinon-chai';
+import 'es6-promise/auto';
 
 global.chai.use(chaiSubset);
+global.chai.use(sinonChai);
 Vue.config.productionTip = false;
 
 // Base tests

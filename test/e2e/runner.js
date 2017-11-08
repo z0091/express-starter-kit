@@ -2,7 +2,7 @@
 process.env.NODE_ENV = 'testing';
 const server = require('../../server');
 
-server.ready.then(() => {
+server.ready.then((_server) => {
     // 2. run the nightwatch test suite against it
     // to run in additional browsers:
     //    1. add an entry in test/e2e/nightwatch.conf.json under "test_settings"
@@ -22,12 +22,12 @@ server.ready.then(() => {
     const runner = spawn('./node_modules/.bin/nightwatch', opts, { stdio: 'inherit' });
 
     runner.on('exit', (code) => {
-        server.close();
+        _server.close();
         process.exit(code);
     });
 
     runner.on('error', (err) => {
-        server.close();
+        _server.close();
         throw err;
     });
 });

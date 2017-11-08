@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 import TokenStorage from '../../../../src/utils/TokenStorage';
-//
+
 describe('Utils TokenStorage tests', () => {
     const key = 'auth_token';
     const value = 'token-1243';

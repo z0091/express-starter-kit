@@ -1,3 +1,5 @@
+/* eslint-disable func-names */
+
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const crypto = require('crypto');

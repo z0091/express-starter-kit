@@ -29,9 +29,14 @@ module.exports = {
             console: false,
         },
     },
+    db: {
+        uri: 'mongodb://localhost/express-starter-kit',
+        options: {},
+    },
     server: {
         port: '9987',
         host: '127.0.0.1',
         secret: 'Z^H3r!fr?"dEOpfe&$3f',
+        api: '/api',
     },
 };
