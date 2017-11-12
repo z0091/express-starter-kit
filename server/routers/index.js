@@ -4,16 +4,14 @@ const auth = require('./auth');
 
 const router = express.Router();
 
-module.exports = (passport) => {
-    router.use(auth);
+router.use(auth.routers);
 
-    router.get('/secret', passport.authenticate('jwt', { session: false }), (req, res) => {
-        res.json('Success! You can not see this without a token');
-    });
+router.get('/secret', auth.checkAuthMiddleware('user'), (req, res) => {
+    res.json('Success! You can not see this without a token');
+});
 
-    router.get('/', (req, res) => {
-        res.json({ message: 'hi' });
-    });
+router.get('/', (req, res) => {
+    res.json({ message: 'hi' });
+});
 
-    return router;
-};
+module.exports = router;

@@ -106,6 +106,7 @@ UserSchema.methods = {
     encryptPassword(password) {
         if (!password) return '';
         try {
+            // TODO посмотреть в сторону bcrypt.
             return crypto
                 .createHmac('sha1', this.salt)
                 .update(password)

@@ -11,12 +11,10 @@ const cookieParser = require('cookie-parser');
 const compress = require('compression');
 const log4js = require('log4js');
 const history = require('connect-history-api-fallback');
-const passport = require('passport');
 
 const bodyParserMiddleware = require('./middlewares/bodyParserMiddleware');
 const dbConnection = require('./db');
 const routers = require('./routers');
-const passportConfig = require('./passport');
 const config = require('../config/config');
 const log = require('./log');
 
@@ -53,11 +51,7 @@ app.use('/assets', express.static(assetsPath));
 log.info(`Debug mode is ${isDebug}`);
 log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
 
-// use passport
-passportConfig(passport);
-app.use(passport.initialize());
-
-app.use(apiPrefix, routers(passport)); // api
+app.use(apiPrefix, routers); // api
 
 async function startWebpack() {
     if (WEBPACK_BUNDLE) {
