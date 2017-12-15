@@ -11,8 +11,7 @@ const router = express.Router();
  * Authentication
  */
 router.post('/login', (req, res) => {
-    const name = req.body.name;
-    const password = req.body.password;
+    const { name, password } = req.body;
 
     // TODO Ограничение числа попыток аунтификации
 

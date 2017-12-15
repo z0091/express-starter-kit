@@ -34,8 +34,7 @@ export const copyFile = (source, target) => new Promise((resolve, reject) => {
 });
 
 export const readDir = (pattern, options) => new Promise((resolve, reject) =>
-    glob(pattern, options, (err, result) => (err ? reject(err) : resolve(result))),
-);
+    glob(pattern, options, (err, result) => (err ? reject(err) : resolve(result))));
 
 export const makeDir = name => new Promise((resolve, reject) => {
     mkdirp(name, err => (err ? reject(err) : resolve()));
@@ -57,5 +56,4 @@ export const copyDir = async (source, target) => {
 };
 
 export const cleanDir = (pattern, options) => new Promise((resolve, reject) =>
-    rimraf(pattern, { glob: options }, (err, result) => (err ? reject(err) : resolve(result))),
-);
+    rimraf(pattern, { glob: options }, (err, result) => (err ? reject(err) : resolve(result))));
