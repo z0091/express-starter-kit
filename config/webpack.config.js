@@ -110,7 +110,7 @@ const appConfig = {
                 exclude: /(node_modules)/,
             },
             {
-                test: /(\.css|\.less)$/,
+                test: /\.less$/,
                 use: extractLess.extract({
                     use: [{
                         loader: 'css-loader',
@@ -122,6 +122,26 @@ const appConfig = {
                         },
                     }, {
                         loader: 'less-loader',
+                        options: {
+                            sourceMap: isDebug,
+                        },
+                    }],
+                    fallback: 'style-loader',
+                }),
+            },
+            {
+                test: /\.css$/,
+                use: extractLess.extract({
+                    use: [{
+                        loader: 'css-loader',
+                        options: {
+                            importLoaders: 1,
+                            sourceMap: isDebug,
+                            modules: false,
+                            minimize: isRelease,
+                        },
+                    }, {
+                        loader: 'postcss-loader',
                         options: {
                             sourceMap: isDebug,
                         },

@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from '../components/Home.vue';
 import Login from '../components/Login.vue';
+import Join from '../components/Join.vue';
 
 import { auth } from '../api';
 
@@ -13,14 +14,19 @@ const router = new Router({
     routes: [
         {
             path: '/',
-            name: 'home',
+            name: 'Home',
             component: Home,
             meta: { requiresAuth: true },
         },
         {
             path: '/login',
-            name: 'login',
+            name: 'Login',
             component: Login,
+        },
+        {
+            path: '/join',
+            name: 'Sign up',
+            component: Join,
         },
     ],
 });

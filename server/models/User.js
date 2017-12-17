@@ -32,6 +32,11 @@ const UserSchema = new Schema({
     username: { type: String, default: '' },
     passwordHash: { type: String, select: false, default: '' },
     salt: { type: String, select: false, default: '' },
+    failedLoginCount: { type: Number, default: 0 },
+    loginCount: { type: Number, default: 0 },
+    blocked: { type: Boolean, default: false },
+    active: { type: Boolean, default: false },
+    createdOn: { type: Date, default: Date.now },
 });
 
 
@@ -153,6 +158,17 @@ UserSchema.statics = {
                 })
                 .catch(reject);
         });
+    },
+
+    /**
+     *
+     * @param name
+     * @param username
+     * @param password
+     * @api private
+     */
+    createNewUser(name = '', username = '', password = '') {
+        console.log(this);
     },
 };
 
