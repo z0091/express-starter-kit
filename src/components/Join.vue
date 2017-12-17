@@ -1,5 +1,6 @@
 <template>
     <el-form
+            v-loading="loading"
             id="joinForm"
             :model="ruleForm"
             :rules="rules"
@@ -25,6 +26,8 @@
     </el-form>
 </template>
 <script>
+    import { register } from '../api/auth';
+
     export default {
         data() {
             return {
@@ -72,17 +75,26 @@
                             }
                         },
                     ],
-                }
+                },
+                loading: false,
             };
         },
         methods: {
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        alert('submit!');
-                    } else {
-                        console.log('error submit!!');
-                        return false;
+                        this.loading = true;
+                        register(this.name, this.username, this.password).then(() => {
+                            this.loading = false;
+
+                            this.$notify({
+                                title: 'Success',
+                                message: 'Registration was successful!',
+                                type: 'success'
+                            });
+
+                            this.resetForm('ruleForm');
+                        });
                     }
                 });
             },

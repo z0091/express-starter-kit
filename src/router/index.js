@@ -4,7 +4,7 @@ import Home from '../components/Home.vue';
 import Login from '../components/Login.vue';
 import Join from '../components/Join.vue';
 
-import { auth } from '../api';
+import { loggedIn } from '../api/auth';
 
 Vue.use(Router);
 
@@ -34,7 +34,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
         // Authorization check here
-        if (!auth.loggedIn()) {
+        if (!loggedIn()) {
             next({
                 path: '/login',
                 query: { redirect: to.fullPath },
