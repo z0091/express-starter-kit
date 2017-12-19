@@ -30,41 +30,17 @@ router.post('/login', (req, res) => {
         .catch(() => res.status(401).json({ message: 'Invalid user or password' }));
 });
 
+router.post('/register', (req, res) => {
+    const { name, password, username } = req.body;
 
-router.post('logout', (req, res) => {
-    res.status(200).json({ message: 'ok' });
+    User
+        .createNewUser(name, username, password)
+        .then(() => {
+            res.json({ message: 'ok' });
+        })
+        .catch(({ message }) => {
+            res.status(400).json({ message });
+        });
 });
-
-router.post('logout', (req, res) => {
-    res.status(200).json({ message: 'ok' });
-});
-
-router.post('register', (req, res) => {
-    res.status(200).json({ message: 'ok' });
-});
-
 
 module.exports.routers = router;
-
-/**
- * Return route middleware to authorization
- * @param role - user roles Eg: "urn:foo", /urn:f[o]{2}/, [/urn:f[o]{2}/, "urn:bar"]
- * @return {Function}
- */
-module.exports.checkAuthMiddleware = role => (req, res, next) => {
-    const token = req.body.token || req.headers.jwt;
-
-    if (token) {
-        jwt.verify(token, role)
-            .then((decoded) => {
-                req.jwt = decoded;
-                next();
-            })
-            .catch((error) => {
-                log.app.error(`Verify JWT ${error}`);
-                res.status(401).json({ message: 'Invalid authorization' });
-            });
-    } else {
-        res.status(401).json({ message: 'Invalid authorization' });
-    }
-};

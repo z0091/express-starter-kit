@@ -120,6 +120,14 @@ UserSchema.methods = {
             return '';
         }
     },
+
+    /**
+     * Check active user
+     * @return {boolean}
+     */
+    isActive() {
+        return !!this.active;
+    },
 };
 
 /**
@@ -141,6 +149,24 @@ UserSchema.statics = {
     },
 
     /**
+     * @param {ObjectId} _id
+     * @return {Promise}
+     */
+    incrementLoginCount(_id) {
+        return this.findByIdAndUpdate(_id, { $inc: { loginCount: 1 } })
+            .then(loginCount => loginCount);
+    },
+
+    /**
+     * @param {ObjectId} _id
+     * @return {Promise}
+     */
+    incrementFailedLoginCount(_id) {
+        return this.findByIdAndUpdate(_id, { $inc: { failedLoginCount: 1 } })
+            .then(failedLoginCount => failedLoginCount);
+    },
+
+    /**
      * Check user by name and password
      * @param {String} name
      * @param {String} password
@@ -150,25 +176,50 @@ UserSchema.statics = {
     checkByLoginAndPassword(name = '', password = '') {
         return new Promise((resolve, reject) => {
             this.findOne({ name })
-                .select('name username email passwordHash salt')
+                .select('+passwordHash +salt')
                 .then((user) => {
-                    if (user && user.authenticate(password)) {
-                        resolve(_.omit(user.toObject(), ['passwordHash', 'salt']));
-                    } else reject();
+                    if (user) {
+                        if (user.authenticate(password)) {
+                            // user should be active
+                            if (user.isActive()) {
+                                // mark login as successful
+                                this.incrementLoginCount(user._id);
+
+                                return resolve(_.omit(user.toObject(), ['passwordHash', 'salt']));
+                            }
+                        } else {
+                            // mark login as failed
+                            this.incrementFailedLoginCount(user._id);
+                        }
+                    }
+                    return reject();
                 })
                 .catch(reject);
         });
     },
 
     /**
-     *
-     * @param name
-     * @param username
-     * @param password
+     * Create new user
+     * @param {String} name
+     * @param {String} username
+     * @param {String} password
+     * @returns {Promise}
      * @api private
      */
     createNewUser(name = '', username = '', password = '') {
-        console.log(this);
+        return new Promise((resolve, reject) => {
+            this.create({
+                name,
+                username,
+                password,
+            }, (err, small) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(small);
+                }
+            });
+        });
     },
 };
 
