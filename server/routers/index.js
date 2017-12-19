@@ -1,17 +1,13 @@
-/*  eslint-disable no-unused-vars  */
 const express = require('express');
-const auth = require('./auth');
+const errorMiddleware = require('../middlewares/errorMiddleware');
+const { checkAuthMiddleware } = require('../middlewares/checkAuthMiddleware');
 
 const router = express.Router();
 
-router.use(auth.routers);
+router.use('/auth', require('./auth'));
+router.use('/admin', checkAuthMiddleware('user'), require('./admin'));
 
-router.get('/secret', auth.checkAuthMiddleware('user'), (req, res) => {
-    res.json('Success! You can not see this without a token');
-});
-
-router.get('/', (req, res) => {
-    res.json({ message: 'hi' });
-});
+// Should be last
+router.use(errorMiddleware);
 
 module.exports = router;

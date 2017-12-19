@@ -5,7 +5,6 @@ if (!process.env.NODE_ENV) {
     process.env.NODE_ENV = 'development';
 }
 
-require('babel-polyfill');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const compress = require('compression');
@@ -48,10 +47,10 @@ app.use(bodyParserMiddleware.bodyParserJsonMiddleware());
 app.use(bodyParserMiddleware.bodyParserUrlencodedMiddleware());
 app.use('/assets', express.static(assetsPath));
 
+app.use(apiPrefix, routers); // api
+
 log.info(`Debug mode is ${isDebug}`);
 log.info(`NODE_ENV: ${process.env.NODE_ENV}`);
-
-app.use(apiPrefix, routers); // api
 
 async function startWebpack() {
     if (WEBPACK_BUNDLE) {
@@ -75,11 +74,11 @@ async function startWebpack() {
             stats: webpackConfig.stats,
         });
 
+        app.use(webpackDevMiddleware);
+
         await new Promise((resolve) => {
             webpackDevMiddleware.waitUntilValid(resolve);
         });
-
-        app.use(webpackDevMiddleware);
     }
 }
 
@@ -90,8 +89,8 @@ async function runServer() {
 
 async function start() {
     await dbConnection();
-    const server = await runServer();
     await startWebpack();
+    const server = await runServer();
 
     log.info(`Server is running. Please open http://${host}:${port}/`);
 
