@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const { serverConfig } = require('../config/webpack.config');
+const serverConfig = require('../../config/webpack.server.conf');
 
 /**
  * Creates application bundles from the source files.

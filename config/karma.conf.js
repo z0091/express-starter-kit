@@ -1,7 +1,7 @@
 /* eslint-disable global-require */
 
 const path = require('path');
-const webpackConfig = require('./webpack.config').testConfig;
+const webpackConfig = require('./webpack.test.conf');
 
 const rootPath = path.join(__dirname, '../test/unit');
 

@@ -1,11 +1,18 @@
+#!/usr/bin/env node
 /* eslint-disable global-require */
 /**
  * Helps to launch other scripts with babel-node
- * e.g. babel-node tools/run build
+ * e.g. node tools/run build
  */
 
+const path = require('path');
+
+const TASKS_DIR = './tasks';
+
+
 function format(time) {
-    return time.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1');
+    return time.toTimeString()
+        .replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1');
 }
 
 function run(fn, options) {
@@ -14,20 +21,26 @@ function run(fn, options) {
 
     console.log(`[${format(start)}] Starting '${task.name}${options ? ` (${options})` : ''}'...`);
 
-    return task(options).then((resolution) => {
-        const end = new Date();
-        const time = end.getTime() - start.getTime();
+    return task(options)
+        .then((resolution) => {
+            const end = new Date();
+            const time = end.getTime() - start.getTime();
 
-        console.log(`[${format(end)}] Finished '${task.name}${options ? ` (${options})` : ''}' after ${time} ms`);
+            console.log(`[${format(end)}] Finished '${task.name}${options ? ` (${options})` : ''}' after ${time} ms`);
 
-        return resolution;
-    });
+            return resolution;
+        });
 }
 
 if (require.main === module && process.argv.length > 2) {
     delete require.cache[__filename];
-    const module = require(`./${process.argv[2]}.js`); // eslint-disable-line import/no-dynamic-require
-    run(module).catch((err) => { console.error(err.stack); process.exit(1); });
+    const path_module = path.join(__dirname, TASKS_DIR, `/${process.argv[2]}.js`);
+    const task_module = require(path_module); // eslint-disable-line import/no-dynamic-require
+    run(task_module)
+        .catch((err) => {
+            console.error(err.stack);
+            process.exit(1);
+        });
 }
 
 module.exports = run;

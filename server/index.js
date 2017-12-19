@@ -58,8 +58,8 @@ async function startWebpack() {
         await Promise.resolve(1);
     } else {
         // eslint-disable-next-line import/no-extraneous-dependencies
-        const webpack = require('webpack');
-        const webpackConfig = require('../config/webpack.config').appConfig;
+        const webpack = require('webpack')
+        const webpackConfig = require('../config/webpack.app.conf');
         const compiler = webpack(webpackConfig);
 
         if (config.get('hotWebpack')) {

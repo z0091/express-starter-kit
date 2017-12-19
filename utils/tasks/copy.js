@@ -1,6 +1,6 @@
-import { writeFile, copyFile, makeDir } from './lib/fs';
-import pkg from '../package.json';
-import config from '../config/config';
+const { writeFile, copyFile, makeDir } = require('../lib/fs');
+const pkg = require('../../package.json');
+const config = require('../../config/config');
 
 const distPath = config.get('dist:path');
 
@@ -31,4 +31,4 @@ async function copy() {
     ]);
 }
 
-export default copy;
+module.exports = copy;

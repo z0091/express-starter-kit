@@ -5,15 +5,14 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const eslintFormatter = require('eslint-friendly-formatter');
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
-const nodeExternals = require('webpack-node-externals');
+const merge = require('webpack-merge');
+const baseConfig = require('./webpack.base.conf');
 const config = require('./config');
 
 const version = config.get('version');
 const appName = config.get('name');
 const srcPath = config.get('app:srcPath');
-const serverPath = config.get('app:serverPath');
 const assetsPath = config.get('app:assetsPath');
-const distPath = config.get('dist:path');
 const isRelease = config.get('release');
 const isDebug = !isRelease;
 const isVerbose = config.get('verbose');
@@ -35,49 +34,7 @@ function resolve(dir) {
     return path.join(__dirname, '..', dir);
 }
 
-const webpackConfig = {
-    resolve: {
-        extensions: ['.js', '.vue', '.json'],
-        modules: [
-            srcPath,
-            'node_modules',
-        ],
-        alias: {
-            vue$: 'vue/dist/vue.esm.js',
-            '@': resolve('src'),
-        },
-    },
-    output: {
-        filename: `[name]-${version}-[hash]${isRelease ? '.min' : ''}.js`,
-        path: distPath,
-        publicPath: '/',
-    },
-
-    plugins: [
-        new webpack.LoaderOptionsPlugin({
-            debug: isDebug,
-            minimize: isRelease,
-        }),
-    ],
-
-    cache: isDebug,
-
-    stats: {
-        colors: true,
-        modules: isVerbose,
-        reasons: isDebug,
-        hash: isVerbose,
-        version: isVerbose,
-        timings: true,
-        chunks: isVerbose,
-        chunkModules: isVerbose,
-        cached: isVerbose,
-        cachedAssets: isVerbose,
-    },
-};
-
-const appConfig = {
-    ...webpackConfig,
+module.exports = merge(baseConfig, {
     context: srcPath,
 
     target: 'web',
@@ -172,7 +129,6 @@ const appConfig = {
     },
 
     plugins: [
-        ...webpackConfig.plugins,
         extractLess,
         new webpack.ContextReplacementPlugin(/moment\/locale/, /en-gb/),
         new HtmlWebpackPlugin({
@@ -224,86 +180,4 @@ const appConfig = {
 
     entry,
     devtool,
-
-};
-
-const testConfig = {
-    ...appConfig,
-    plugins: [
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: '"testing"',
-                BABEL_ENV: '"test"',
-            },
-        }),
-    ],
-
-    entry: '',
-    devtool: '#inline-source-map',
-};
-
-const serverConfig = {
-    ...webpackConfig,
-    target: 'node',
-
-    resolve: {
-        ...webpackConfig.resolve,
-    },
-
-    externals: [nodeExternals()],
-
-    output: {
-        ...webpackConfig.output,
-        filename: 'server.js',
-        libraryTarget: 'commonjs2',
-    },
-
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                exclude: /(node_modules)/,
-            },
-        ],
-    },
-
-    plugins: [
-        ...webpackConfig.plugins,
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: isDebug ? '"development"' : '"production"',
-                BROWSER: false,
-            },
-            WEBPACK_BUNDLE: true,
-            __DEV__: isDebug,
-        }),
-
-        ...isDebug ? [] : [
-            new webpack.optimize.UglifyJsPlugin({
-                minimize: true,
-                mangle: true,
-                compress: {
-                    warnings: isVerbose,
-                },
-            }),
-        ],
-    ],
-
-    entry: path.resolve(serverPath, 'index.js'),
-
-    node: {
-        console: false,
-        global: false,
-        process: false,
-        Buffer: false,
-        __filename: false,
-        __dirname: false,
-    },
-};
-
-module.exports = {
-    appConfig,
-    serverConfig,
-    testConfig,
-};
+});

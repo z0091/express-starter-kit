@@ -5,21 +5,21 @@
   "scripts": {
     "start": "node server/index.js",
     "start:prod": "node server/index.js --release",
-    "build": "$(npm bin)/babel-node utils/run build",
+    "build": "node utils/run build",
     "build:dist": "npm run build -- --release",
-    "bundle:app": "$(npm bin)/babel-node utils/run bundleApp",
-    "bundle:server": "$(npm bin)/babel-node utils/run bundleServer",
-    "clean": "$(npm bin)/babel-node utils/run clean",
+    "bundle:app": "node utils/run bundleApp",
+    "bundle:server": "node utils/run bundleServer",
+    "clean": "node utils/run clean",
     "lint": "$(npm bin)/eslint .",
     "security:nsp": "$(npm bin)/nsp check",
     "security:snyk": "$(npm bin)/snyk test",
     "security": "npm run security:nsp && npm run security:snyk",
     "unit": "$(npm bin)/karma start --single-run",
-    "e2e": "$(npm bin)/babel-node test/e2e/runner.js",
+    "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e && npm run security && npm run lint"
   },
   "engines": {
-    "node": ">=8.4.0"
+    "node": ">=8.9.0"
   },
   "repository": {
     "type": "git",
@@ -102,6 +102,7 @@
     "webpack": "^3.10.0",
     "webpack-dev-middleware": "^2.0.1",
     "webpack-hot-middleware": "^2.21.0",
+    "webpack-merge": "^4.1.1",
     "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {

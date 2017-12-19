@@ -1,18 +1,18 @@
-import fs from 'fs';
-import path from 'path';
-import glob from 'glob';
-import mkdirp from 'mkdirp';
-import rimraf from 'rimraf';
+const fs = require('fs');
+const path = require('path');
+const glob = require('glob');
+const mkdirp = require('mkdirp');
+const rimraf = require('rimraf');
 
-export const readFile = file => new Promise((resolve, reject) => {
+module.exports.readFile = file => new Promise((resolve, reject) => {
     fs.readFile(file, 'utf8', (err, data) => (err ? reject(err) : resolve(data)));
 });
 
-export const writeFile = (file, contents) => new Promise((resolve, reject) => {
+module.exports.writeFile = (file, contents) => new Promise((resolve, reject) => {
     fs.writeFile(file, contents, 'utf8', err => (err ? reject(err) : resolve()));
 });
 
-export const copyFile = (source, target) => new Promise((resolve, reject) => {
+module.exports.copyFile = (source, target) => new Promise((resolve, reject) => {
     let cbCalled = false;
     function done(err) {
         if (!cbCalled) {
@@ -33,14 +33,14 @@ export const copyFile = (source, target) => new Promise((resolve, reject) => {
     rd.pipe(wr);
 });
 
-export const readDir = (pattern, options) => new Promise((resolve, reject) =>
+module.exports.readDir = (pattern, options) => new Promise((resolve, reject) =>
     glob(pattern, options, (err, result) => (err ? reject(err) : resolve(result))));
 
-export const makeDir = name => new Promise((resolve, reject) => {
+module.exports.makeDir = name => new Promise((resolve, reject) => {
     mkdirp(name, err => (err ? reject(err) : resolve()));
 });
 
-export const copyDir = async (source, target) => {
+module.exports.copyDir = async (source, target) => {
     const dirs = await readDir('**/*.*', {
         cwd: source,
         nosort: true,
@@ -55,5 +55,5 @@ export const copyDir = async (source, target) => {
     }));
 };
 
-export const cleanDir = (pattern, options) => new Promise((resolve, reject) =>
+module.exports.cleanDir = (pattern, options) => new Promise((resolve, reject) =>
     rimraf(pattern, { glob: options }, (err, result) => (err ? reject(err) : resolve(result))));
