@@ -1,0 +1,5 @@
+--require test/server/support/env.js
+--reporter spec
+--recursive
+--ui bdd
+--timeout 3000

@@ -14,9 +14,10 @@
     "security:nsp": "$(npm bin)/nsp check",
     "security:snyk": "$(npm bin)/snyk test",
     "security": "npm run security:nsp && npm run security:snyk",
-    "unit": "$(npm bin)/karma start --single-run",
-    "e2e": "node test/e2e/runner.js",
-    "test": "npm run unit && npm run e2e && npm run security && npm run lint"
+    "test:unit": "$(npm bin)/karma start --single-run",
+    "test:e2e": "node test/e2e/runner.js",
+    "test:server": "$(npm bin)/mocha test/server/*.js test/server/**/*.js --opts test/server/mocha.opts",
+    "test": "npm run test:server && npm run test:unit && npm run test:e2e && npm run security && npm run lint"
   },
   "engines": {
     "node": ">=8.9.0"
