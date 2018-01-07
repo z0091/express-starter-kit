@@ -14,6 +14,7 @@ const UserSchema = new Schema({
     name: {
         type: String,
         default: '',
+        unique: true,
         validate: {
             isAsync: true,
             validator(name, cb) {
